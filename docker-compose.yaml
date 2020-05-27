@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  sonarqube:
+    image: sonarqube:8.2-community
+    expose:
+      - 9000
+    ports:
+      - "127.0.0.1:9000:9000"
+    networks:
+      - sonarnet
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+    volumes:
+      - sonarqube_conff:/opt/sonarqube/conf
+      - sonarqube_dataa:/opt/sonarqube/data
+      - sonarqube_extensionss:/opt/sonarqube/extensions
+      - sonarqube_bundled-pluginss:/opt/sonarqube/lib/bundled-plugins
+    deploy:
+      resources:
+        limits:
+          cpus: '0.001'
+          memory: 500M
+        reservations:
+          cpus: '0.0001'
+          memory: 200M
+
+  db:
+    image: postgres
+    networks:
+      - sonarnet
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - postgresqll:/var/lib/postgresql
+      - postgresql_dataa:/var/lib/postgresql/data
+
+networks:
+  sonarnet:
+
+volumes:
+  sonarqube_conff:
+  sonarqube_dataa:
+  sonarqube_extensionss:
+  sonarqube_bundled-pluginss:
+  postgresqll:
+  postgresql_dataa:
